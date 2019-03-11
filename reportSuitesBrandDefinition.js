@@ -54,7 +54,7 @@ var brandDetails = {
 }
 
 var reportSuite = brandDetails[domain].reportSuite;
-if (subDomain.toLowerCase() == 'welcome') {
+if (!(location.hostname.indexOf('-dev.') >= 0 || location.hostname.indexOf('yoda.') >= 0 || location.hostname.indexOf('si1') >= 0 || location.hostname.indexOf('qa1') >= 0 || location.hostname.indexOf('si2') >= 0 || location.hostname.indexOf('qa2') >= 0 || location.hostname.indexOf('pte') >= 0)) {
     reportsuite += SUFFIX_PROD;
 } else {
     reportSuite += SUFFIX_DEV;
