@@ -99,13 +99,16 @@ var getLoginStatus = function () {
     // In some cases the loggedInStatus variable is not populated.
     // Then we check if the userId is a number (in other words, the ID is populated).
     if (a === 'view' && b.loggedInStatus == false && b.userId === '') {
-        // User is not fully logged-in
+        // User is not logged-in
         storageManagement._deleteStorage(storageManagement.LOCAL_STORAGE, 'user_id');
     } else if (b.loggedInStatus == true || typeof (b.userId) == 'number' || storageManagement._getStorage(storageManagement.LOCAL_STORAGE, 'user_id')) {
         result = 'Logged-In';
         setCookie('DTMhasEverLoggedIn', '1', 365)
         storageManagement._setStorage(storageManagement.LOCAL_STORAGE, 'hasEverLoggedIn', '1');
-        storageManagement._setStorage(storageManagement.LOCAL_STORAGE, 'user_id', b.userId);
+
+        // Update userId only if it is a proper number.
+        if (typeof (b.userId) === 'number')
+            storageManagement._setStorage(storageManagement.LOCAL_STORAGE, 'user_id', b.userId);
     }
     return result;
 }
