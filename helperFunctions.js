@@ -98,10 +98,13 @@ var getLoginStatus = function () {
     }
     // In some cases the loggedInStatus variable is not populated.
     // Then we check if the userId is a number (in other words, the ID is populated).
-    if (b.loggedInStatus == true || typeof (b.userId) == 'number' || storageManagement._getStorage(storageManagement.sessionStorage, 'user_id')) {
+    if (a === 'view' && b.loggedInStatus == false && b.userId === '') {
+        // User is not fully logged-in
+        storageManagement._deleteStorage(storageManagement.LOCAL_STORAGE, 'user_id');
+    } else if (b.loggedInStatus == true || typeof (b.userId) == 'number' || storageManagement._getStorage(storageManagement.LOCAL_STORAGE, 'user_id')) {
         result = 'Logged-In';
         setCookie('DTMhasEverLoggedIn', '1', 365)
-        storageManagement._setStorage(storageManagement.localStorage, 'hasEverLoggedIn', '1');
+        storageManagement._setStorage(storageManagement.LOCAL_STORAGE, 'hasEverLoggedIn', '1');
         if (b.userId && b.userId !== '')
             storageManagement._setStorage(storageManagement.sessionStorage, 'user_id', b.userId);
     }
@@ -210,15 +213,15 @@ var getPromotionName = function () {
 }
 
 var storageManagement = {
-    _storageNameSpace: 'webAnalitics',
-    localStorage: 'localStorage',
-    sessionStorage: 'sessionStorage',
+    NAMESPACE: 'webAnalitics',
+    LOCAL_STORAGE: 'localStorage',
+    SESSION_STORAGE: 'sessionStorage',
     syncValue: function setValue(name, value) {
-        this._setStorage('localStorage', name, value);
+        this._setStorage(this.LOCAL_STORAGE, name, value);
         this._setCookie(name, value, 365 * 2);
     },
     getAndSyncValue: function getValue(name) {
-        var value = this._getCookie(name) || this._getStorage('localStorage', name);
+        var value = this._getCookie(name) || this._getStorage(this.LOCAL_STORAGE, name);
         if (typeof (value) !== 'undefined')
             this.syncValue(name, value);
         return value;
@@ -238,7 +241,7 @@ var storageManagement = {
             var jsonData = this._getNameSpaceData(storageType);
             var item = { name: value };
             jsonData[name] = value;
-            window[storageType].setItem(this._storageNameSpace, JSON.stringify(jsonData));
+            window[storageType].setItem(this.NAMESPACE, JSON.stringify(jsonData));
         }
     },
     _getStorage: function getStorage(storageType, name) {
@@ -247,8 +250,15 @@ var storageManagement = {
             return jsonData[name];
         }
     },
+    _deleteStorage: function deleteStorage(storageType, name) {
+        if (this._isStorageAvailable()) {
+            var jsonData = this._getNameSpaceData(storageType);
+            delete jsonData[name];
+            window[storageType].setItem(this.NAMESPACE, JSON.stringify(jsonData));
+        }
+    },
     _getNameSpaceData: function getNameSpaceData(storageType) {
-        var nameSpacedData = window[storageType].getItem(this._storageNameSpace);
+        var nameSpacedData = window[storageType].getItem(this.NAMESPACE);
         return JSON.parse(nameSpacedData) || {};
     }
 };
