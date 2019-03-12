@@ -215,7 +215,7 @@ var getPromotionName = function () {
 }
 
 var storageManagement = {
-    NAMESPACE: 'webAnalitics',
+    NAMESPACE: 'webAnalytics',
     LOCAL_STORAGE: 'localStorage',
     SESSION_STORAGE: 'sessionStorage',
     syncValue: function setValue(name, value) {
