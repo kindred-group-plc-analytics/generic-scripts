@@ -101,6 +101,12 @@ var getLoginStatus = function () {
     if (b.loggedInStatus == true || typeof (b.userId) == 'number') {
         result = 'Logged-In';
         setCookie('DTMhasEverLoggedIn', '1', 365)
+        if (storageManagement._isStorageAvailable()) {
+            storageManagement._setStorage('localStorage', 'hasEverLoggedIn', '1');
+            if (b.userId && b.userId !== '')
+                storageManagement._setStorage('sessionStorage', 'user_id', b.userId);
+        }
+
     }
     return result;
 }
@@ -208,15 +214,16 @@ var getPromotionName = function () {
 
 var storageManagement = {
     _storageNameSpace: 'webAnalitics',
-    setValue: function setValue(name, value) {
-        if (this._isStorageAvailable())
-            this._setStorage('localStorage', name, value);
+    localStorage: 'localStorage',
+    sessionStorage: 'sessionStorage',
+    syncValue: function setValue(name, value) {
+        this._setStorage('localStorage', name, value);
         this._setCookie(name, value, 365 * 2);
     },
-    getValue: function getValue(name) {
-        var value = this._getCookie(name) || (this._isStorageAvailable ? this._getStorage('localStorage', name) : undefined);
+    getAndSyncValue: function getValue(name) {
+        var value = this._getCookie(name) || this._getStorage('localStorage', name);
         if (typeof (value) !== 'undefined')
-            this.setValue(name, value);
+            this.syncValue(name, value);
         return value;
     },
     _getCookie: getCookie,
@@ -230,14 +237,18 @@ var storageManagement = {
         return isAvailable;
     },
     _setStorage: function setStorage(storageType, name, value) {
-        var jsonData = this._getNameSpaceData(storageType);
-        var item = { name: value };
-        jsonData[name] = value;
-        window[storageType].setItem(this._storageNameSpace, JSON.stringify(jsonData));
+        if (this._isStorageAvailable()) {
+            var jsonData = this._getNameSpaceData(storageType);
+            var item = { name: value };
+            jsonData[name] = value;
+            window[storageType].setItem(this._storageNameSpace, JSON.stringify(jsonData));
+        }
     },
     _getStorage: function getStorage(storageType, name) {
-        var jsonData = this._getNameSpaceData(storageType);
-        return jsonData[name];
+        if (this._isStorageAvailable()) {
+            var jsonData = this._getNameSpaceData(storageType);
+            return jsonData[name];
+        }
     },
     _getNameSpaceData: function getNameSpaceData(storageType) {
         var nameSpacedData = window[storageType].getItem(this._storageNameSpace);
