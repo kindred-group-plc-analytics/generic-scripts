@@ -98,15 +98,12 @@ var getLoginStatus = function () {
     }
     // In some cases the loggedInStatus variable is not populated.
     // Then we check if the userId is a number (in other words, the ID is populated).
-    if (b.loggedInStatus == true || typeof (b.userId) == 'number') {
+    if (b.loggedInStatus == true || typeof (b.userId) == 'number' || storageManagement._getStorage(storageManagement.sessionStorage, 'user_id')) {
         result = 'Logged-In';
         setCookie('DTMhasEverLoggedIn', '1', 365)
-        if (storageManagement._isStorageAvailable()) {
-            storageManagement._setStorage('localStorage', 'hasEverLoggedIn', '1');
-            if (b.userId && b.userId !== '')
-                storageManagement._setStorage('sessionStorage', 'user_id', b.userId);
-        }
-
+        storageManagement._setStorage(storageManagement.localStorage, 'hasEverLoggedIn', '1');
+        if (b.userId && b.userId !== '')
+            storageManagement._setStorage(storageManagement.sessionStorage, 'user_id', b.userId);
     }
     return result;
 }
