@@ -105,8 +105,7 @@ var getLoginStatus = function () {
         result = 'Logged-In';
         setCookie('DTMhasEverLoggedIn', '1', 365)
         storageManagement._setStorage(storageManagement.LOCAL_STORAGE, 'hasEverLoggedIn', '1');
-        if (b.userId && b.userId !== '')
-            storageManagement._setStorage(storageManagement.sessionStorage, 'user_id', b.userId);
+        storageManagement._setStorage(storageManagement.LOCAL_STORAGE, 'user_id', b.userId);
     }
     return result;
 }
