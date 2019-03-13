@@ -211,6 +211,8 @@ var getPageNameMaria = function (dataLayer) {
 var getPromotionName = function () {
     // Promotion name is extracted from the URL:
     var pathNameComponents = window.location.pathname.split('/')[2] || '';
+    // Remove trailing version number of the promotion URL
+    pathNameComponents = pathNameComponents.replace(/([0-9\-]*)$/,'');
     return decodeURI(pathNameComponents);
 }
 
