@@ -208,11 +208,39 @@ var getPageNameMaria = function (dataLayer) {
     }
 }
 
+var getPageNameOldEvar1 = function () {
+    // Audience Manager specific variable
+    // This is needed for legacy reasons unfortunately.
+    var domain = (function () {
+        var locale = window.locale;
+
+        if ((window.location.hostname.indexOf("banners") > -1 || window.location.hostname.indexOf("ads") > -1 || window.location.hostname.indexOf("welcome") > -1) && typeof locale !== "undefined") {
+            return document.location.hostname + ":" + locale;
+        } else {
+            return document.location.hostname;
+        }
+    })();
+
+    var deviceGroup = (function () {
+        if (navigator.userAgent.match(/iPad/i)) {
+            return 'tablet';
+        } else if (navigator.userAgent.match(/mobile/i)) {
+            return 'mobilephone';
+        } else if (navigator.userAgent.match(/Android|Touch/i)) {
+            return 'tablet';
+        } else {
+            return 'desktop';
+        }
+    })();
+    var evar1 = domain + ":::" + deviceGroup + window.location.pathname.replace(/\//g, ':');
+    return evar1;
+}
+
 var getPromotionName = function () {
     // Promotion name is extracted from the URL:
     var pathNameComponents = window.location.pathname.split('/')[2] || '';
     // Remove trailing version number of the promotion URL
-    pathNameComponents = pathNameComponents.replace(/([0-9\-]*)$/,'');
+    pathNameComponents = pathNameComponents.replace(/([0-9\-]*)$/, '');
     return decodeURI(pathNameComponents);
 }
 
@@ -271,6 +299,7 @@ var storageManagement = {
 functions.getTrackingCode = getTrackingCode;
 functions.getPageName = getPageName;
 functions.getPageNameMaria = getPageNameMaria;
+functions.getPageNameOldEvar1 = getPageNameOldEvar1;
 functions.getLoginStatus = getLoginStatus;
 functions.timeParting = timeParting;
 functions.getNewRepeat = getNewRepeat;
