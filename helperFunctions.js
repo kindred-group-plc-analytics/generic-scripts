@@ -9,13 +9,13 @@ function setCookie(name, value, days) {
     }
     // Remove the subdomain. Works on domains with both 2 or 3 parts i.e. co.uk and com.
     domainName = document.location.hostname.split('.').splice(1).join('.');
-    document.cookie = name + "=" + (value || "") + expires + "; path=/;domain=" + domainName;
+    document.cookie = name + "=" + (encodeURI(value) || "") + expires + "; path=/;domain=" + domainName;
 }
 
 var getCookie = function getCookie(name) {
     var value = "; " + document.cookie;
     var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
+    if (parts.length == 2) return decodeURI(parts.pop().split(";").shift());
 }
 
 var getTrackingCode = function () {
