@@ -244,6 +244,21 @@ var getPromotionName = function () {
     return decodeURI(pathNameComponents);
 }
 
+var getInvertedPageName = function (isApp) {
+    if (isApp == "true")
+        return window.location.pathname.replace(/\//g, ':') + ":::APP" + "::" + window.location.hostname;
+    else
+        return window.location.pathname.replace(/\//g, ':') + ":::" + window.cms.device.group + "::" + window.location.hostname;
+}
+
+var getRegistrationSteps = function () {
+    if (window.location.hash === "#registrationStep:1") { var regiStep = "registration: step 2" }
+    else if (window.location.hash === "#registrationStep:2") { var regiStep = "registration: step 3" }
+    else if (window.location.hash === "#registrationStep:3") { var regiStep = "registration: step 4" }
+    else { var regiStep = "" }
+    return regiStep;
+}
+
 var storageManagement = {
     NAMESPACE: 'webAnalytics',
     LOCAL_STORAGE: 'localStorage',
@@ -307,6 +322,8 @@ functions.getCookie = getCookie;
 functions.setCookie = setCookie;
 functions.getPromotionName = getPromotionName;
 functions.storageManagement = storageManagement;
+functions.getInvertedPageName = getInvertedPageName;
+functions.getRegistrationSteps = getRegistrationSteps;
 
 utag.helpers = {};
 utag.helpers.functions = functions;
